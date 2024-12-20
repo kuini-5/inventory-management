@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 
 export async function GET(_, { params }) {
   const { id } = params;
-  // Get a single <%= resource %>
   const data = await prisma.<%= resource %>.findUnique({
     where: { id: Number(id) },
   });
@@ -15,7 +14,6 @@ export async function GET(_, { params }) {
 export async function PUT(request, { params }) {
   const { id } = params;
   const body = await request.json();
-  // Update a <%= resource %>
   const updatedData = await prisma.<%= resource %>.update({
     where: { id: Number(id) },
     data: body,
@@ -25,7 +23,6 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(_, { params }) {
   const { id } = params;
-  // Delete a <%= resource %>
   await prisma.<%= resource %>.delete({
     where: { id: Number(id) },
   });

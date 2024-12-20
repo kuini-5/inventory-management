@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { PrimeReactProvider } from 'primereact/api';
-// import "primereact/resources/themes/lara-light-cyan/theme.css";
-// import 'primereact/resources/primereact.min.css';
+import { ThemeProvider } from "@/components/theme-provider"
+import { SidebarProvider } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
 import "./globals.css";
-import 'primeicons/primeicons.css';
-import Tailwind from 'primereact/passthrough/tailwind';
 
 
 const geistSans = Geist({
@@ -29,13 +27,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-stone-900`}
       >
-        <PrimeReactProvider value={{ unstyled: true, pt: Tailwind }}>
-          {children}
-        </PrimeReactProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SidebarProvider>
+            <AppSidebar />
+            {children}
+          </SidebarProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
