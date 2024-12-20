@@ -29,17 +29,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-stone-900`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
           <SidebarProvider>
             <AppSidebar />
-            {children}
+            <div className="w-full h-screen">
+              {children}
+            </div>
           </SidebarProvider>
         </ThemeProvider>
       </body>

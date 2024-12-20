@@ -19,18 +19,18 @@ const items = [
     icon: Home,
   },
   {
-    title: "Inbox",
+    title: "Protected",
     url: "protected",
     icon: Inbox,
   },
   {
-    title: "Calendar",
-    url: "#",
+    title: "Register",
+    url: "register",
     icon: Calendar,
   },
   {
-    title: "Search",
-    url: "#",
+    title: "Login",
+    url: "login",
     icon: Search,
   },
   {

@@ -18,7 +18,7 @@ export async function middleware(req: NextRequest) {
   const token = req.headers.get('Authorization')?.split(' ')[1];
 
   if (!token) {
-    return NextResponse.redirect(new URL('/login', req.url))
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
   try {
@@ -38,8 +38,7 @@ export async function middleware(req: NextRequest) {
     });
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error('Token verification error:', error.message);
-      return NextResponse.redirect(new URL('/login', req.url))
+      return NextResponse.json({ message: 'Invalid or expired token', error: error.message }, { status: 403 });
     }
   }
 }
