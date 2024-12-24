@@ -49,7 +49,6 @@ model Product {
   sku          String                 @unique
   description  String?
   price        Float
-  quantity     Int                    @default(0)
   categoryId   Int
   supplierId   Int?
   category     Category               @relation(fields: [categoryId], references: [id])
