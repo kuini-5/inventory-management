@@ -21,6 +21,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import { login } from '@/app/actions/auth'
 
 const formSchema = z
     .object({
@@ -43,19 +44,12 @@ export default function Login() {
   });
 
   const handleLogin = async (values: z.infer<typeof formSchema>) => {
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      localStorage.setItem('token', data.token);
-      router.push('/protected');
-    } else {
-      alert(data.message);
+    try {
+      await login(values)
+    } catch (error) {
+      if (!(error instanceof Error && error.message.includes('NEXT_REDIRECT'))) {
+        alert(error instanceof Error ? error.message : 'Login failed')
+      }
     }
   };
 
@@ -97,21 +91,17 @@ export default function Login() {
                         />
 
                         <Button className="w-full" type="submit">Submit</Button>
+                        
+                        <div className="text-center text-sm text-muted-foreground">
+                            Don't have an account?{" "}
+                            <a href="/register" className="text-primary hover:underline">
+                                Register here
+                            </a>
+                        </div>
                     </form>
                 </Form>
             </CardContent>
         </Card>
     </div>
-    // <div>
-    //   <h1>Login</h1>
-    //   <input placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
-    //   <input
-    //     type="password"
-    //     placeholder="Password"
-    //     value={password}
-    //     onChange={(e) => setPassword(e.target.value)}
-    //   />
-    //   <button onClick={handleLogin}>Login</button>
-    // </div>
   );
 }

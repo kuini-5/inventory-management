@@ -21,6 +21,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import { register } from "@/app/actions/auth";
 
 const formSchema = z
     .object({
@@ -37,97 +38,102 @@ const formSchema = z
     .superRefine(({ password, verifyPassword }, ctx) => {
         if (password !== verifyPassword) {
             ctx.addIssue({
-            code: "custom",
-            path: ["verifyPassword"],
-            message: "Passwords must match.",
+                code: "custom",
+                path: ["verifyPassword"],
+                message: "Passwords must match.",
             });
         }
-});
-
-export default function Register() {
-  const router = useRouter();
-  
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-      verifyPassword: "",
-    },
-  });
-
-  const handleRegister = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-    const res = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
     });
 
-    const data = await res.json();
-    if (res.ok) {
-        router.push('/login');
-    } else {
-      alert(data.message);
-    }
-  };
+export default function Register() {
+    const router = useRouter();
 
-  return (
-    <div className="flex justify-center items-center h-full">
-        <Card className="w-[450px]">
-            <CardHeader>
-                <CardTitle>Register</CardTitle>
-                <CardDescription>Create an account</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(handleRegister)} className="space-y-8">
-                        <FormField
-                            control={form.control}
-                            name="username"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Username</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Username" {...field} />
-                                    </FormControl>
-                                </FormItem>
-                            )}
-                        />
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            username: "",
+            password: "",
+            verifyPassword: "",
+        },
+    });
 
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
+    const handleRegister = async (values: z.infer<typeof formSchema>) => {
+        try {
+            await register({
+                username: values.username,
+                password: values.password
+            });
+            router.push('/product');
+        } catch (error) {
+            if (!(error instanceof Error && error.message.includes('NEXT_REDIRECT'))) {
+                alert(error instanceof Error ? error.message : 'Login failed')
+            }
+        }
+    };
+
+    return (
+        <div className="flex justify-center items-center h-full">
+            <Card className="w-[450px]">
+                <CardHeader>
+                    <CardTitle>Register</CardTitle>
+                    <CardDescription>Create an account</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(handleRegister)} className="space-y-8">
+                            <FormField
+                                control={form.control}
+                                name="username"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Username</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Username" {...field} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Password</FormLabel>
                                         <FormControl>
                                             <Input type="password" placeholder="********" {...field} />
                                         </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="verifyPassword"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Verify Password</FormLabel>
+                            <FormField
+                                control={form.control}
+                                name="verifyPassword"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Verify Password</FormLabel>
                                         <FormControl>
                                             <Input type="password" placeholder="********" {...field} />
                                         </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <Button className="w-full" type="submit">Submit</Button>
-                    </form>
-                </Form>
-            </CardContent>
-        </Card>
-    </div>
-  );
+                            <Button className="w-full" type="submit">Submit</Button>
+
+                            <div className="text-center text-sm text-muted-foreground">
+                                Already have an account?{" "}
+                                <a href="/login" className="text-primary hover:underline">
+                                    Login here
+                                </a>
+                            </div>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
+        </div>
+    );
 }
